@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Your OTP Code</title>
+    <style>
+      body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin:0; padding:0; }
+      .container { max-width:600px; margin:50px auto; background:#fff; padding:30px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+      h2 { color:#007bff; }
+      .otp { font-size:24px; font-weight:bold; margin:20px 0; letter-spacing:5px; color: #222; text-align: center; }
+      p { line-height:1.5; }
+      .footer { font-size:12px; color:#999; margin-top:30px; text-align:center; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Hello!</h2>
+      <p>Use the following OTP code to verify your account:</p>
+      <div class="otp"><%= otp %></div>
+      <p>This code will expire in 10 minutes.</p>
+      <p>If you didn't request this, please ignore this email.</p>
+      <div class="footer">
+        &copy; <%= year %> Your Company. All rights reserved.
+      </div>
+    </div>
+  </body>
+</html>
