@@ -1,0 +1,238 @@
+                                                                                            # 🎟️ EventTix Platform
+
+
+
+
+**EventTix** هو نظام ذكي لإدارة الفعاليات (Events Management System) مبني باستخدام **NestJS** ومتكامل مع **الذكاء الاصطناعي (LLMs)** عبر **RAG Architecture** لتقديم إجابات ذكية ودقيقة للمستخدمين بناءً على بيانات الفعاليات المخزنة.
+
+---
+
+##  Table of Contents
+
+
+1. Project Overview
+2. Problem Statement
+3. Solution Overview
+4. Tech Stack
+5. System Architecture
+6. Core Features
+7. AI & RAG Implementation
+8. API Endpoints
+9. Project Structure
+10. Environment Configuration
+11. Error Handling
+12. Scalability & Future Enhancements
+13. How to Run the Project
+14. Use Cases
+
+---
+
+##  Project Overview
+
+EventTix يهدف إلى تسهيل إدارة الفعاليات وتقديم تجربة ذكية للمستخدم من خلال السماح له بطرح أسئلة طبيعية مثل:
+
+> "إمتى أقرب حفلة؟"
+> "إيه الأحداث اللي الأسبوع الجاي؟"
+
+ويقوم النظام بالإجابة بدقة اعتمادًا على بيانات الفعاليات الحقيقية.
+
+---
+
+##  Problem Statement
+
+* المستخدمين يجدون صعوبة في البحث داخل الفعاليات يدويًا
+* أنظمة إدارة الفعاليات التقليدية لا تدعم البحث الذكي
+* الحاجة إلى دمج AI بدون فقدان الدقة أو حدوث hallucinations
+
+---
+
+## Solution Overview
+
+* Backend قوي باستخدام NestJS
+* RESTful APIs لإدارة الفعاليات
+* دمج LLMs مع قاعدة البيانات باستخدام RAG
+* Smart Ask Endpoint للإجابة الذكية
+
+---
+
+##  Tech Stack
+
+### Backend
+
+* **NestJS**
+* **TypeScript**
+* **Node.js**
+
+### AI
+
+* **OpenAI API**
+* **RAG (Retrieval-Augmented Generation)**
+
+### Validation & Utils
+
+* class-validator
+* class-transformer
+* dotenv
+
+---
+
+## System Architecture
+
+```
+Client
+  │
+  ▼
+EventController
+  │
+  ▼
+LlmRagService
+  │
+  ├── Fetch Events from DB
+  ├── Build Context
+  └── Call OpenAI API
+  │
+  ▼
+AI Response
+```
+
+---
+
+##  Core Features
+
+###  Event Management
+
+* Create Event
+* Update Event
+* Delete Event
+* Get All Events
+* Get Event by ID
+
+---
+
+##  AI & RAG Implementation
+
+###  Smart Ask Feature
+
+Endpoint:
+
+```
+POST /events/ask
+```
+
+Flow:
+
+1. User sends a question
+2. System retrieves relevant events
+3. Builds contextual prompt
+4. Sends to LLM
+5. Returns accurate AI response
+
+###  Prompt Engineering
+
+* System Prompt لتحديد دور الـ AI
+* منع الإجابة خارج الداتا المتاحة
+
+---
+
+##  API Endpoints
+
+### Events
+
+```
+POST   /events
+GET    /events
+GET    /events/:id
+PUT    /events/:id
+DELETE /events/:id
+```
+
+### AI Ask
+
+```
+POST /events/ask
+```
+
+---
+
+## Project Structure
+
+```
+src/
+ ├── events/
+ │    ├── events.controller.ts
+ │    ├── events.service.ts
+ │    ├── events.module.ts
+ │    ├── dto/
+ │    └── entities/
+ │
+ ├── llm/
+ │    └── llm-rag.service.ts
+ │
+ ├── config/
+ └── main.ts
+```
+
+---
+
+## Environment Configuration
+
+Create `.env` file:
+
+```
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
+```
+
+---
+
+## Error Handling
+
+* try/catch blocks
+* NestJS Exceptions
+* Meaningful error messages
+
+---
+
+##  Scalability & Future Enhancements
+
+* Authentication & Authorization
+* Ticket Booking System
+* Payment Integration
+* Redis Caching
+* Event Recommendation Engine
+* Analytics Dashboard
+
+---
+
+##  How to Run the Project
+
+```bash
+npm install
+npm run start:dev
+```
+
+Server will run on:
+
+```
+http://localhost:3000
+```
+
+---
+
+##  Use Cases
+
+* User asks about upcoming events
+* Admin manages events
+* AI-powered event discovery
+
+---
+
+##  Author
+
+**Omar Elhelaly**
+Backend Developer | Node.js | NestJS | AI Integration
+
+---
+
+##Final Note
+
+EventTix is designed to be scalable, intelligent, and production-ready, combining modern backend architecture with AI-driven user experience.
