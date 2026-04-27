@@ -13,19 +13,19 @@ export class EventBookingMcpService {
 
       return {
         type: 'text',
-        text: `✅ Booking confirmed for "${booking.events[0].title}" (${dto.seats} seats). Total: $${booking.totalPrice}`,
+        text: ` Booking confirmed for "${booking.events[0].title}" (${dto.seats} seats). Total: $${booking.totalPrice}`,
       };
     } catch (error: any) {
       if (error.response?.message) {
         return {
           type: 'text',
-          text: `⚠️ Booking failed: ${error.response.message}`,
+          text: ` Booking failed: ${error.response.message}`,
         };
       }
 
       return {
         type: 'text',
-        text: `⚠️ Booking failed: ${error.message}`,
+        text: ` Booking failed: ${error.message}`,
       };
     }
   }

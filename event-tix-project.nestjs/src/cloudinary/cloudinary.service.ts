@@ -17,18 +17,17 @@ export interface CloudinaryResponse {
 export class CloudinaryService {
   uploadFile(
     file: Express.Multer.File,
-    uploadId?: string, // 👈 لو حصل retry
+    uploadId?: string,
   ): Promise<CloudinaryResponse> {
     return new Promise<CloudinaryResponse>((resolve, reject) => {
-      // 👇 أول مرة يتولد – بعد كده نبعته تاني
       const upload_id = uploadId || randomUUID();
 
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: 'uploads',
-          chunk_size: 5_000_000, // 5MB
+          chunk_size: 5_000_000,
           resource_type: 'auto',
-          upload_id, // ⭐ السطر المهم
+          upload_id,
         },
         (error, result) => {
           if (error) {
@@ -36,7 +35,7 @@ export class CloudinaryService {
           }
           resolve({
             ...(result as CloudinaryResponse),
-            upload_id, // نرجّعه للفرونت
+            upload_id,
           });
         },
       );
@@ -44,8 +43,6 @@ export class CloudinaryService {
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
   }
-
-  // رفع ملفات متعددة
   async uploadFiles(
     files: Express.Multer.File[],
   ): Promise<CloudinaryResponse[]> {

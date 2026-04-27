@@ -7,19 +7,20 @@ import {
   ManyToMany,
   OneToMany,
   JoinTable,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 import { Community } from '../../Community/entities/community.entities';
 import { Booking } from '../../Book/entities/book.entities';
 import { Event } from '../../Event/entities/Event.entities';
 import { Notification } from '../../Notification/entities/Notification.entities';
 import { Exclude } from 'class-transformer';
+
+
 export enum UserRole {
   Admin = 'Admin',
   User = 'User',
   Organizer = 'Organizer',
 }
+
 
 @Entity('Users')
 export class User {
@@ -63,19 +64,18 @@ isAccountVerified: boolean;
   @Column({ type: 'varchar', length: 255, nullable: true })
   resetPasswordToken: string | null;
 
-  // ManyToMany مع Community
+ 
   @ManyToMany(() => Community, (community) => community.users)
   @JoinTable()
   communities: Community[];
 
-  // One User يمكنه أن يكون عنده عدة Bookings
+
   @OneToMany(() => Booking, (booking) => booking.user)
   bookings: Booking[];
 
-  // One User يمكنه إنشاء عدة Events
   @OneToMany(() => Event, (event) => event.user)
   events: Event[];
-  // One User يمكنه أن يكون عنده عدة Notifications
+  
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
 
@@ -85,6 +85,91 @@ isAccountVerified: boolean;
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // 🎯 يعني إيه select:false؟
 

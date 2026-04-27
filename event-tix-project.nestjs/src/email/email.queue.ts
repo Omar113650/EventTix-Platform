@@ -1,4 +1,3 @@
-// أي مكان في المشروع لما عايز تبعت ايميل
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 

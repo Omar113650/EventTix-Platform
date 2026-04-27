@@ -49,6 +49,7 @@ export class AuthService {
   }
 
   async register(createUserDto: CreateUserDto, file?: Express.Multer.File) {
+    
     const existing = await this.userRepository.findOne({
       where: { email: createUserDto.email },
     });
@@ -89,13 +90,13 @@ export class AuthService {
       },
       5 * 60 * 1000,
     );
+
     await this.emailService.sendOtpEmail({
       to: createUserDto.email,
       otp,
       subject: 'Your OTP Verification Code',
     });
-    // await this.client.emit('send_otp', { email: createUserDto.email, otp });
-
+    
     const accessToken = await generateAccessToken(this.jwtService, newUser);
 
     return { message: 'OTP has been sent to your email', newUser, accessToken };
@@ -166,9 +167,8 @@ export class AuthService {
     user.otpExpiresAt = otpExpiresAt;
     await this.userRepository.save(user);
 
-
-        await this.emailService.sendOtpEmail({
-      to:email,
+    await this.emailService.sendOtpEmail({
+      to: email,
       otp,
       subject: 'New OTP to Verification Code',
     });
@@ -176,14 +176,22 @@ export class AuthService {
     return { message: 'New OTP has been sent to your email' };
   }
 
-  // Login user (only verified users)
+
   async login(email: string, password: string) {
     if (!email || !password)
       throw new BadRequestException('Email and password are required');
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: ['id','name','phone', 'email', 'password', 'isAccountVerified', 'role'],
+      select: [
+        'id',
+        'name',
+        'phone',
+        'email',
+        'password',
+        'isAccountVerified',
+        'role',
+      ],
     });
 
     if (!user) throw new BadRequestException('Invalid email or password');
@@ -195,24 +203,21 @@ export class AuthService {
 
     const accessToken = await generateAccessToken(this.jwtService, user);
 
-     await this.emailService.sendWelcomeAfterLogin({
+    await this.emailService.sendWelcomeAfterLogin({
       to: email,
       subject: 'email Verification success , hello in EveTix',
     });
 
 
-    // return { user, accessToken };
     const safeUser = plainToInstance(User, user, {
-  excludeExtraneousValues: false,
-});
+      excludeExtraneousValues: false,
+    });
 
-return { user: safeUser, accessToken };
-    
+    return { user: safeUser, accessToken };
   }
 
-
-  // يبعتلي لينك علي الجميل عشان ادخل اعمل باسور جديد بعد ما ادخل الايميل واعمل فورجت باسور
-  // Send reset password link
+  
+ 
   async sendResetPasswordLink(email: string) {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user)
@@ -221,19 +226,17 @@ return { user: safeUser, accessToken };
     user.resetPasswordToken = randomBytes(32).toString('hex');
     await this.userRepository.save(user);
 
-  // private readonly config: ConfigService, خلي بالك هنا 
-  const link = `${this.config.get<string>('CLIENT_DOMAIN')}/reset-password/${user.id}/${user.resetPasswordToken}`;
+   
+    const link = `${this.config.get<string>('CLIENT_DOMAIN')}/reset-password/${user.id}/${user.resetPasswordToken}`;
 
-  await this.emailService.sendResetPasswordEmail(email, link);
-
+    await this.emailService.sendResetPasswordEmail(email, link);
 
     return {
       message: 'Password reset link has been sent to your email',
     };
   }
 
-  // باختصار: دي وظيفة التحقق من رابط إعادة التعيين قبل ما المستخدم يدخل باسورد جديد
-  // Validate reset password link
+  
   async getResetPasswordLink(userId: string, resetPasswordToken: string) {
     const user = await this.userRepository.findOne({
       where: { id: String(userId) },
@@ -246,9 +249,6 @@ return { user: safeUser, accessToken };
     };
   }
 
-
-  // هنا ببدا ادخل الباسورد الجديد 
-  // Reset password
   async resetPassword(dto: ResetPasswordDto) {
     const { password, userId, resetPasswordToken } = dto;
 
@@ -267,15 +267,4 @@ return { user: safeUser, accessToken };
       message: 'Password reset successfully, please log in',
     };
   }
-
-
-
-
 }
-
-
-
-
-
-
-

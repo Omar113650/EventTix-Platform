@@ -13,16 +13,16 @@ import{NotificationModule} from '../Notification/notification.module'
 import{EmailModule} from '../email/email.module'
 import{RabbitMQModule} from '../rabbitmq/rabbitmq.module'
 import{CloudinaryModule} from '../cloudinary/cloudinary.module'
-// خلي بالك من حته اني لازم اربط event هنا ذاكرها بقا 
+
 @Module({
   imports: [TypeOrmModule.forFeature([Booking,Event]), AuthModule, EventModule,NotificationModule,EmailModule,RabbitMQModule,CloudinaryModule],
   controllers: [BookingController],
-  providers: [BookingService, RolesGuard,EventService],
+  providers: [BookingService, RolesGuard],
 })
 export class BookingModule {}
 // implements NestModule {
 //   configure(consumer: MiddlewareConsumer) {
-//     consumer.apply(AuthMiddleware).forRoutes(BookingController); // أو ممكن تعمل route محدد
+//     consumer.apply(AuthMiddleware).forRoutes(BookingController); 
 //   }
 // }
 //

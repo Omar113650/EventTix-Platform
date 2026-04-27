@@ -53,7 +53,7 @@ export class AuthController {
     return await this.authService.register(body, file);
   }
 
-  // LOGIN
+ 
   @Version('1')
   @Post('login')
   @ApiOperation({ summary: 'User login (must verify OTP first)' })
@@ -61,7 +61,7 @@ export class AuthController {
     return await this.authService.login(body.email, body.password);
   }
 
-  // VERIFY OTP
+
   @Version('1')
   @Post('verify-otp')
   @ApiOperation({ summary: 'Verify user email using OTP' })
@@ -69,7 +69,7 @@ export class AuthController {
     return await this.authService.verifyOtp(body);
   }
 
-  // RESEND OTP
+
   @Version('1')
   @Post('resend-otp')
   @ApiOperation({ summary: 'Resend OTP to email' })
@@ -77,7 +77,6 @@ export class AuthController {
     return await this.authService.resendOtp(body);
   }
 
-  // FORGOT PASSWORD (send reset link)
   @Version('1')
   @Post('forgot-password')
   @ApiOperation({ summary: 'Send password reset link to user email' })
@@ -85,7 +84,7 @@ export class AuthController {
     return await this.authService.sendResetPasswordLink(email);
   }
 
-  // CHECK RESET PASSWORD LINK
+
   @Version('1')
   @Get('reset-password/:userId/:token')
   @ApiOperation({ summary: 'Validate reset password link' })
@@ -96,7 +95,7 @@ export class AuthController {
     return await this.authService.getResetPasswordLink(userId, token);
   }
 
-  // RESET PASSWORD
+
   @Version('1')
   @Post('reset-password')
   @ApiOperation({ summary: 'Reset password using link token' })
@@ -104,12 +103,12 @@ export class AuthController {
     return await this.authService.resetPassword(dto);
   }
 
-  // Redirect to Google for login
+
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {}
 
-  // Google callback
+
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {

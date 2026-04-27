@@ -6,7 +6,7 @@ import{VectorDBService} from './vector-db.service'
 
 @Module({
   imports: [
-    forwardRef(() => EventModule), // ✅ حل الاعتماد الدائري
+    forwardRef(() => EventModule), 
   ],
 //   LlmService
   providers: [LlmRagService,VectorDBService ],

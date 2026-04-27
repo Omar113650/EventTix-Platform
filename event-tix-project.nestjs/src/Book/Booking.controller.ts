@@ -22,9 +22,9 @@ export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
   @Post('create-book')
-  // @Version('1')
-  // @Roles('Admin', 'Organizer')
-  // @UseGuards(RolesGuard)
+  @Version('1')
+  @Roles('Admin', 'Organizer')
+  @UseGuards(RolesGuard)
   async create(@Body() dto: CreateBookingDto,id:string ) {
     return await this.bookingService.createBooking(dto,id);
   }

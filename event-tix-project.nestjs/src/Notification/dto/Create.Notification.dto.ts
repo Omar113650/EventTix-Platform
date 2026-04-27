@@ -1,5 +1,11 @@
 // src/notification/dto/create-notification.dto.ts
-import { IsString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+  IsDate,
+} from 'class-validator';
 
 export class CreateNotificationDto {
   @IsString()
@@ -13,6 +19,9 @@ export class CreateNotificationDto {
   @IsString()
   @IsNotEmpty()
   body: string;
+
+  @IsDate()
+  expiresAt: Date;
 
   @IsUUID()
   userId: string;

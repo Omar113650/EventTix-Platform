@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit, OnApplicationShutdown, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnApplicationShutdown,
+  Logger,
+} from '@nestjs/common';
 import * as amqp from 'amqplib';
 
 @Injectable()
@@ -12,7 +17,9 @@ export class RabbitMQService implements OnModuleInit, OnApplicationShutdown {
     this.channel = await this.connection.createChannel();
 
     // Main exchange
-    await this.channel.assertExchange('event-exchange', 'topic', { durable: true });
+    await this.channel.assertExchange('event-exchange', 'topic', {
+      durable: true,
+    });
 
     // DLX (Dead Letter Exchange)
     await this.channel.assertExchange('email.dlx', 'direct', { durable: true });
@@ -43,19 +50,18 @@ export class RabbitMQService implements OnModuleInit, OnApplicationShutdown {
     await this.channel.consume(queueName, async (msg) => {
       if (!msg) return;
 
-      // 📌 هذه السطر لتتبع الرسائل في الـ queue
-      console.log('Message received in queue:', msg.content.toString());
 
       try {
         const data = JSON.parse(msg.content.toString());
         await callback(data);
 
         // مؤقتًا يمكنك تعليق ack لتظل الرسائل في queue
-        // this.channel.ack(msg); 
-
+        this.channel.ack(msg);
       } catch (err) {
-        this.logger.error(`Error processing message from ${queueName}: ${err.message}`);
-        this.channel.nack(msg, false, false); // يروح DLQ
+        this.logger.error(
+          `Error processing message from ${queueName}: ${err.message}`,
+        );
+        this.channel.nack(msg, false, false); 
       }
     });
   }

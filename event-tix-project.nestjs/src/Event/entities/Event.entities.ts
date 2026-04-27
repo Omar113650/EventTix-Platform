@@ -7,8 +7,6 @@ import {
   JoinTable,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
-  OneToOne,
 } from 'typeorm';
 import { User } from '../../Auth/entities/user.entities';
 import { EventCategory } from '../../Category/entities/Category.entities';
@@ -16,6 +14,10 @@ import { Booking } from '../../Book/entities/book.entities';
 import { Community } from '../../Community/entities/community.entities';
 import { Notification } from '../../Notification/entities/Notification.entities';
 
+export enum PriceType {
+  PAID = 'paid',
+  FREE = 'free',
+}
 @Entity('Events')
 export class Event {
   @PrimaryGeneratedColumn('uuid')
@@ -24,7 +26,7 @@ export class Event {
   @Column({ type: 'varchar', length: 30 })
   title: string;
 
-@Column({ name: 'profile_image', type: 'text', nullable: true })
+  @Column({ name: 'profile_image', type: 'text', nullable: true })
   Image: string | null;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -43,34 +45,33 @@ export class Event {
   capacity: number;
 
   @Column({
+    type: 'enum',
+    enum: PriceType,
+  })
+  priceType: PriceType;
+
+  @Column({
     type: 'decimal',
     precision: 10,
     scale: 2,
-    enum: ['price', ' for free'],
+    nullable: true,
   })
-  price: number;
+  price?: number;
 
   @Column({ type: 'varchar', length: 300, nullable: true })
   comment: string;
 
-  // ManyToOne مع User
   @ManyToOne(() => User, (user) => user.events, { nullable: false })
   user: User;
 
-  // ManyToOne مع EventCategory
   @ManyToOne(() => EventCategory, (category) => category.events, {
     nullable: false,
   })
   category: EventCategory;
 
-  // ManyToMany مع Bookings
   @ManyToMany(() => Booking, (booking) => booking.events)
   bookings: Booking[];
 
-  //   @OneToMany(() => Booking, (booking) => booking.event)
-  // bookings: Booking[];
-
-  // ManyToMany مع Community
   @ManyToMany(() => Community, (community) => community.events)
   @JoinTable()
   communities: Community[];

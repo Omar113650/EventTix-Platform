@@ -19,7 +19,6 @@ export class PaymentController {
     return { checkoutUrl };
   }
 
-  // 8️⃣ success
   @Get('success')
   async success(
     @Query('token') orderId: string,

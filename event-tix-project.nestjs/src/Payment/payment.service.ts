@@ -17,7 +17,7 @@ export class PaymentService {
     private bookingRepo: Repository<Booking>,
   ) {}
 
-  // 6️⃣ Create Checkout
+
   async createCheckout(bookingId: string, userId: string) {
     const booking = await this.bookingRepo.findOne({
       where: { id: bookingId },
@@ -58,7 +58,7 @@ export class PaymentService {
     return response.result.links.find((l) => l.rel === 'approve').href;
   }
 
-  // 7️⃣ Capture Payment
+
   async capture(orderId: string, bookingId: string) {
     const client = paypalClient();
 

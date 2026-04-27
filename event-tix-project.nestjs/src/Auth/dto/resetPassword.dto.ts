@@ -27,3 +27,5 @@ export class ResetPasswordDto {
   @ApiProperty()
   resetPasswordToken: string;
 }
+
+

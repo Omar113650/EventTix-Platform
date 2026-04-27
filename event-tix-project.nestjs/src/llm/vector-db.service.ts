@@ -1,7 +1,7 @@
 // vector-db.service.ts
 import { Injectable } from '@nestjs/common';
-import OpenAI from 'openai'; // مثال على OpenAI Embeddings
-import { cosineSimilarity } from '../utils/cosineSimilarity'; // دالة لحساب تشابه cosine
+import OpenAI from 'openai';
+import { cosineSimilarity } from '../utils/cosineSimilarity'; 
 
 @Injectable()
 export class VectorDBService {

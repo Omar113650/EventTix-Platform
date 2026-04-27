@@ -1,12 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Like,
-  Repository,
-  Between,
-  MoreThanOrEqual,
-  LessThanOrEqual,
-} from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Community } from './entities/community.entities';
 import { CreateCommunityDto } from './dto/createCommunity.dto';
 import { UpdateDtoCommunity } from './dto/updateCommunity.dto';
@@ -19,7 +13,7 @@ export class CommunityService {
   constructor(
     @InjectRepository(Community)
     private readonly communityRepository: Repository<Community>,
-      @InjectRepository(Event)
+    @InjectRepository(Event)
     private readonly EventRepository: Repository<Event>,
   ) {}
 
@@ -30,13 +24,6 @@ export class CommunityService {
       users: [{ id: userId }],
       events: [{ id: eventId }],
     });
-    // await this.communityRepository.find({
-    //   relations: {
-    //     users: true,
-    //     events: true,
-    //   },
-    // });
-
     return await this.communityRepository.save(community);
   }
 
@@ -44,29 +31,25 @@ export class CommunityService {
     page?: number;
     limit?: number;
     search?: string;
+    userId?: string;
   }): Promise<{
     communities: Community[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const filterOptions: any = {};
-    if (params?.search) filterOptions.name = Like(`%${params.search}%`);
+    const { page = 1, limit = 10, search, userId } = params || {};
 
-    const page = params?.page ?? 1;
-    const limit = params?.limit ?? 10;
-    const skip = (page - 1) * limit;
-
-    this.communityRepository.find({
-      relations: ['user', 'event'],
-    });
-
-    // where: { user: { id: userId } },
-    // relations: ["event"]   // لو عايز تجيب معه الأحداث
+    const where: any = {};
+    if (search) {
+      where.name = Like(`%${search}%`);
+    }
 
     const [communities, total] = await this.communityRepository.findAndCount({
-      where: filterOptions,
-      skip,
+      // ternary operator
+      where: userId ? { users: { id: userId } } : {},
+      relations: ['users', 'events'],
+      skip: (page - 1) * limit,
       take: limit,
       order: { createdAt: 'DESC' },
     });
@@ -100,13 +83,10 @@ export class CommunityService {
     const event = await this.EventRepository.findOne({
       where: { id },
     });
-
     if (!event) {
       throw new NotFoundException('event not found');
     }
-
     event.comment = dto.comment;
-
     await this.EventRepository.save(event);
 
     return {
@@ -134,7 +114,3 @@ export class CommunityService {
     };
   }
 }
-
-// ✔ preload يستخدم لما تكون مش جايب entity قبلها
-
-// ✔ طالما جايبه بـ findOne → عدل و save

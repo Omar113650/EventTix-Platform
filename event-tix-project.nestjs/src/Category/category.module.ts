@@ -19,12 +19,9 @@ import { AuthMiddleware } from '../middleware/auth/auth.middleware';
 })
 export class CategoryModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes(CategoryController);
-    // consumer
-    //   .apply(AuthMiddleware)
-    //   .forRoutes({
-    //     path: '/api/category/add-category',
-    //     method: RequestMethod.POST,
-    //   }); //   method محدد
+    consumer.apply(AuthMiddleware).forRoutes({
+      path: '/api/category/add-category',
+      method: RequestMethod.POST,
+    });
   }
 }

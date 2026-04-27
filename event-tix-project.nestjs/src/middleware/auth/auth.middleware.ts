@@ -10,7 +10,7 @@ export class AuthMiddleware implements NestMiddleware {
       const authHeader = req.headers['authorization'];
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(HttpStatus.UNAUTHORIZED).json({
-          messge: 'Unauthorized access',
+          message: 'Unauthorized access',
         });
       }
       const token = authHeader?.split(' ')[1];

@@ -14,20 +14,4 @@ export class ResendOtpDto {
 
 
 
-// 🎯 ليه شيلنا createdAt و updatedAt؟
 
-// ➤ دول السيرفر اللي بيعملهم
-// ممنوع تيجوا من الـ Front.
-
-// 🎯 ليه شيلنا OTP من CreateUserDto؟
-
-// ➤ لأن المستخدم:
-
-// ما ينفعش يبعط OTP
-
-// الـ Backend هو اللي يولده
-
-// الـ Front ينتظر:
-// "Check your email to verify your account"
-
-// زي كل المواقع الكبيرة.

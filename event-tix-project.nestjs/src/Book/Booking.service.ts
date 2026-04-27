@@ -11,8 +11,8 @@ import { CreateBookingDto } from './dto/CreateBookingDto';
 import { UpdateBookingDto } from './dto/UpdateBookingDto';
 import { EventService } from '../Event/event.service';
 import { Event } from '../Event/entities/Event.entities';
-import{NotificationService} from '../Notification/notification.service';
-import{EmailService} from '../email/email.service'
+import { NotificationService } from '../Notification/notification.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class BookingService {
@@ -20,9 +20,9 @@ export class BookingService {
     @InjectRepository(Booking)
     private readonly bookingRepository: Repository<Booking>,
     private readonly eventService: EventService,
-    private readonly notificationService:NotificationService,
-        private readonly emailService:EmailService,
-    //  خلي بالم مكانها فوق او قبلها يفرق ف الايرورو ومش هتشتغل
+    private readonly notificationService: NotificationService,
+    private readonly emailService: EmailService,
+
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
   ) {}
@@ -35,12 +35,11 @@ export class BookingService {
       throw new NotFoundException('Event not found');
     }
 
-    // const book = await this.bookingRepository.findOne({ where: { id } });
-    // if (book) {
-    //   throw new ForbiddenException('this book in this event is already done ');
-    // }
+    const book = await this.bookingRepository.findOne({ where: { id } });
+    if (book) {
+      throw new ForbiddenException('this book in this event is already done ');
+    }
 
-    // 2) اتأكد إن فيه سعة كفاية
     if (event.capacity <= 0) {
       throw new BadRequestException(
         'All seats for this event are already booked',
@@ -51,10 +50,11 @@ export class BookingService {
       throw new BadRequestException(`Only ${event.capacity} seats left`);
     }
 
-    // 3) احسب الإجمالي
+    if (!event.price) {
+      throw new BadRequestException('Event price is not defined');
+    }
     const totalPrice = event.price * dto.seats;
 
-    // 4) اعمل booking
     const booking = this.bookingRepository.create({
       ...dto,
       totalPrice,
@@ -63,26 +63,24 @@ export class BookingService {
       // event: { id: eventId }
     });
 
-    // 5) قلّل السعة الباقية
     event.capacity -= dto.seats;
     await this.eventRepository.save(event);
 
-  // 8️⃣ أرسل Notification / Email بعد الحجز
-  await this.notificationService.create({
-    type: 'booking',
-    title: `🎫 Booking Confirmed: ${event.title}`,
-    body: `Your booking for "${event.title}" (${dto.seats} seats) has been confirmed. Total: $${totalPrice}`,
-    userId: userId,
-    eventId: event.id,
-  });
+    await this.notificationService.create({
+      type: 'booking',
+      title: ` Booking Confirmed: ${event.title}`,
+      body: `Your booking for "${event.title}" (${dto.seats} seats) has been confirmed. Total: $${totalPrice}`,
+      userId: userId,
+      eventId: event.id,
+      expiresAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+    });
 
-  await this.emailService.NotificationNewEvent({
-    to: 'user@example.com', // استبدلها ببريد المستخدم الحقيقي، ممكن تجيبه من userService
-    title: `Booking Confirmed: ${event.title}`,
-    body: `Hello! Your booking for "${event.title}" (${dto.seats} seats) has been confirmed. Total: $${totalPrice}`,
-  });
+    await this.emailService.NotificationNewEvent({
+      to: 'user@example.com',
+      title: `Booking Confirmed: ${event.title}`,
+      body: `Hello! Your booking for "${event.title}" (${dto.seats} seats) has been confirmed. Total: $${totalPrice}`,
+    });
 
-    // 6) احفظ الـ booking
     return await this.bookingRepository.save(booking);
   }
 

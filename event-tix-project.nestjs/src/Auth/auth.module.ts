@@ -11,7 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import{GoogleStrategy} from './strategies/google.strategy'
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Community]), // مهم جدًا
+    TypeOrmModule.forFeature([User, Community]), 
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -26,6 +26,6 @@ import{GoogleStrategy} from './strategies/google.strategy'
   ],
   controllers: [AuthController],
   providers: [AuthService,GoogleStrategy],
-   exports: [JwtModule]
+   exports: [JwtModule,AuthService]
 })
 export class AuthModule {}

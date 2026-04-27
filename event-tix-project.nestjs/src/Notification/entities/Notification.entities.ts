@@ -1,6 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { User } from '../../Auth/entities/user.entities';
-import{Event} from '../../Event/entities/Event.entities'
+import { Event } from '../../Event/entities/Event.entities';
 import { Booking } from 'src/Book/entities/book.entities';
 
 @Entity('Notifications')
@@ -17,17 +27,19 @@ export class Notification {
   @Column({ type: 'text' })
   body: string;
 
-  // كل Notification مرتبط بـ User واحد
   @ManyToOne(() => User, (user) => user.notifications, { nullable: false })
   user: User;
 
-  @OneToMany(()=>Event,(event)=> event.notification)
-  @JoinColumn({name:'eventId'})
-  event:Event
+  @OneToMany(() => Event, (event) => event.notification)
+  @JoinColumn({ name: 'eventId' })
+  event: Event;
 
-  @OneToMany(()=>Booking,(bookings)=> bookings.notification)
-  @JoinColumn({name:'eventId'})
-  bookings:Booking
+  @OneToMany(() => Booking, (bookings) => bookings.notification)
+  @JoinColumn({ name: 'eventId' })
+  bookings: Booking;
+
+  @Column({ type: 'timestamp', nullable: true })
+  expiresAt: Date;
 
   @CreateDateColumn()
   createdAt: Date;

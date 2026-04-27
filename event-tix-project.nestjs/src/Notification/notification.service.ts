@@ -8,8 +8,6 @@ import { UpdateNotificationDto } from './dto/Update.Notification.dto';
 import { User } from '../Auth/entities/user.entities';
 import { Event } from '../Event/entities/Event.entities';
 import { EmailService } from '../email/email.service';
-
-// import { CreateUserDto } from '../Auth/dto/createUser.dto';
 @Injectable()
 export class NotificationService {
   constructor(
@@ -38,11 +36,9 @@ export class NotificationService {
       ...(event && { event }),
     });
 
-    // 1️⃣ خزّن Notification
     const savedNotification =
       await this.notificationRepository.save(notification);
 
-    // 2️⃣ ابعت Email تلقائي
     await this.emailService.NotificationNewEvent({
       to: user.email,
       subject: savedNotification.title,
