@@ -1,238 +1,646 @@
-                                                                                            # 🎟️ EventTix Platform
+#  EventTix — AI-Powered Event Management Platform
 
+**EventTix** is an intelligent Event Management System built with **NestJS**, **TypeScript**, and **Node.js**.
 
+The platform combines traditional event management capabilities with **Large Language Models (LLMs)** and **Retrieval-Augmented Generation (RAG)** to provide intelligent, context-aware answers based on real event data.
 
+Instead of manually searching through events, users can ask natural-language questions such as:
 
-**EventTix** هو نظام ذكي لإدارة الفعاليات (Events Management System) مبني باستخدام **NestJS** ومتكامل مع **الذكاء الاصطناعي (LLMs)** عبر **RAG Architecture** لتقديم إجابات ذكية ودقيقة للمستخدمين بناءً على بيانات الفعاليات المخزنة.
+> “What is the nearest upcoming event?”
+
+> “What events are happening next week?”
+
+> “Are there any events this weekend?”
+
+The system retrieves relevant event information, builds contextual data for the LLM, and generates accurate responses grounded in the available event data.
 
 ---
 
 ##  Table of Contents
 
-
 1. Project Overview
 2. Problem Statement
-3. Solution Overview
+3. Solution
 4. Tech Stack
 5. System Architecture
 6. Core Features
-7. AI & RAG Implementation
+7. AI & RAG Architecture
 8. API Endpoints
 9. Project Structure
 10. Environment Configuration
 11. Error Handling
 12. Scalability & Future Enhancements
-13. How to Run the Project
+13. Installation & Setup
 14. Use Cases
+15. Author
+
+---
+#  Project Overview
+
+EventTix is designed to simplify event management while providing an intelligent event discovery experience.
+
+The platform allows administrators to manage events through RESTful APIs while enabling users to interact with event data using natural-language questions.
+
+The main goal is to combine a structured backend system with AI capabilities without allowing the AI model to generate answers unrelated to the available event data.
+
+### Key Objectives
+
+- Provide a clean and scalable Event Management API.
+- Simplify event discovery.
+- Allow users to search events using natural language.
+- Integrate LLMs safely with application data.
+- Reduce AI hallucinations using contextual grounding.
+- Build a backend architecture that can evolve into a complete ticketing platform.
 
 ---
 
-##  Project Overview
+#  Problem Statement
 
-EventTix يهدف إلى تسهيل إدارة الفعاليات وتقديم تجربة ذكية للمستخدم من خلال السماح له بطرح أسئلة طبيعية مثل:
+Traditional event management systems usually depend on filters, search forms, or manual browsing.
 
-> "إمتى أقرب حفلة؟"
-> "إيه الأحداث اللي الأسبوع الجاي؟"
+This creates several challenges:
 
-ويقوم النظام بالإجابة بدقة اعتمادًا على بيانات الفعاليات الحقيقية.
+- Users may need to browse many events manually.
+- Traditional search systems cannot easily understand natural-language questions.
+- Keyword-based search may fail to understand user intent.
+- Direct LLM integration can produce hallucinated or inaccurate information.
+- AI models need access to relevant application data before answering domain-specific questions.
 
----
-
-##  Problem Statement
-
-* المستخدمين يجدون صعوبة في البحث داخل الفعاليات يدويًا
-* أنظمة إدارة الفعاليات التقليدية لا تدعم البحث الذكي
-* الحاجة إلى دمج AI بدون فقدان الدقة أو حدوث hallucinations
+EventTix addresses these problems by combining structured event data with a Retrieval-Augmented Generation workflow.
 
 ---
 
-## Solution Overview
+#  Solution
 
-* Backend قوي باستخدام NestJS
-* RESTful APIs لإدارة الفعاليات
-* دمج LLMs مع قاعدة البيانات باستخدام RAG
-* Smart Ask Endpoint للإجابة الذكية
+EventTix provides a backend architecture that combines traditional APIs with AI-powered event discovery.
 
----
+The solution includes:
 
-##  Tech Stack
+- A **NestJS backend** for application logic.
+- **RESTful APIs** for event management.
+- Structured event data retrieval.
+- **LLM integration** for natural-language interaction.
+- A **RAG-based workflow** for grounding AI responses.
+- A dedicated **Smart Ask API** for AI-powered event queries.
 
-### Backend
-
-* **NestJS**
-* **TypeScript**
-* **Node.js**
-
-### AI
-
-* **OpenAI API**
-* **RAG (Retrieval-Augmented Generation)**
-
-### Validation & Utils
-
-* class-validator
-* class-transformer
-* dotenv
+The AI receives relevant event context before generating a response, helping ensure that answers remain connected to actual platform data.
 
 ---
 
-## System Architecture
+# 🛠️ Tech Stack
 
+## Backend
+
+- **Node.js**
+- **NestJS**
+- **TypeScript**
+
+## Artificial Intelligence
+
+- **OpenAI API**
+- **Large Language Models (LLMs)**
+- **Retrieval-Augmented Generation (RAG)**
+- **Prompt Engineering**
+
+## Validation & Utilities
+
+- **class-validator**
+- **class-transformer**
+- **dotenv**
+
+## API Architecture
+
+- RESTful API
+- DTO-based validation
+- Modular NestJS architecture
+- Dependency Injection
+
+---
+
+#  System Architecture
+
+The main AI request flow follows this architecture:
+
+```text
+┌─────────────────────┐
+│       Client        │
+└──────────┬──────────┘
+           │
+           │ HTTP Request
+           ▼
+┌─────────────────────┐
+│   EventController   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│    LlmRagService    │
+└──────────┬──────────┘
+           │
+           ├──── Retrieve Event Data
+           │
+           ├──── Select Relevant Events
+           │
+           ├──── Build Context
+           │
+           ├──── Construct Prompt
+           │
+           ▼
+┌─────────────────────┐
+│     OpenAI API      │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│     AI Response     │
+└─────────────────────┘
 ```
-Client
-  │
-  ▼
-EventController
-  │
-  ▼
-LlmRagService
-  │
-  ├── Fetch Events from DB
-  ├── Build Context
-  └── Call OpenAI API
-  │
-  ▼
-AI Response
+
+### Request Flow
+
+```text
+User Question
+      ↓
+Event Controller
+      ↓
+Retrieve Event Data
+      ↓
+Build Relevant Context
+      ↓
+Construct LLM Prompt
+      ↓
+Send Request to OpenAI
+      ↓
+Generate Grounded Answer
+      ↓
+Return Response to User
 ```
 
 ---
 
-##  Core Features
+# Core Features
 
-###  Event Management
+## Event Management
 
-* Create Event
-* Update Event
-* Delete Event
-* Get All Events
-* Get Event by ID
+The platform provides standard event management operations.
+
+Administrators can:
+
+- Create events.
+- Update existing events.
+- Delete events.
+- Retrieve all events.
+- Retrieve a specific event by ID.
+
+This functionality forms the foundation of the EventTix platform.
 
 ---
 
-##  AI & RAG Implementation
+##  AI-Powered Event Discovery
 
-###  Smart Ask Feature
+Users can interact with the event system using natural language instead of relying only on traditional search filters.
 
-Endpoint:
+Example questions:
 
+```text
+What events are happening next week?
+
+What is the nearest upcoming event?
+
+Are there any events this weekend?
+
+Which events are available soon?
 ```
+
+The backend processes the question and provides relevant event information to the LLM.
+
+---
+
+#  AI & RAG Architecture
+
+EventTix uses a Retrieval-Augmented Generation approach to improve the accuracy of AI-generated responses.
+
+Instead of allowing the LLM to answer only from its general knowledge, EventTix provides event data as context.
+
+## RAG Workflow
+
+```text
+User Question
+      ↓
+Retrieve Relevant Events
+      ↓
+Build Event Context
+      ↓
+Combine Context + User Question
+      ↓
+Send Prompt to LLM
+      ↓
+Generate Context-Aware Response
+      ↓
+Return Answer
+```
+
+### Why RAG?
+
+RAG helps the system:
+
+- Ground responses in actual event data.
+- Reduce hallucinations.
+- Improve answer relevance.
+- Provide dynamic answers when event data changes.
+- Separate application knowledge from the LLM's pretrained knowledge.
+
+---
+
+#  Smart Ask Feature
+
+The Smart Ask endpoint allows users to query event information using natural language.
+
+### Endpoint
+
+```http
 POST /events/ask
 ```
 
-Flow:
+### Example Request
 
-1. User sends a question
-2. System retrieves relevant events
-3. Builds contextual prompt
-4. Sends to LLM
-5. Returns accurate AI response
+```json
+{
+  "question": "What events are happening next week?"
+}
+```
 
-###  Prompt Engineering
+### Processing Flow
 
-* System Prompt لتحديد دور الـ AI
-* منع الإجابة خارج الداتا المتاحة
+1. Receive the user's question.
+2. Validate the request.
+3. Retrieve relevant event information.
+4. Build contextual data.
+5. Construct the LLM prompt.
+6. Send the prompt to the OpenAI API.
+7. Receive the generated response.
+8. Return the answer to the client.
 
 ---
 
-##  API Endpoints
+#  Prompt Engineering
 
-### Events
+Prompt engineering is used to control how the LLM interacts with the event data.
 
-```
-POST   /events
-GET    /events
-GET    /events/:id
-PUT    /events/:id
-DELETE /events/:id
-```
+The system prompt defines the AI's responsibilities and limitations.
 
-### AI Ask
+The LLM is instructed to:
 
-```
-POST /events/ask
-```
+- Answer using the provided event context.
+- Avoid inventing unavailable event information.
+- Provide clear and relevant responses.
+- Stay focused on event-related questions.
+- Indicate when the requested information is unavailable.
+
+This approach helps reduce hallucinations and improves response reliability.
 
 ---
 
-## Project Structure
+#  API Endpoints
 
-```
+## Event Management
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/events` | Create a new event |
+| `GET` | `/events` | Retrieve all events |
+| `GET` | `/events/:id` | Retrieve an event by ID |
+| `PUT` | `/events/:id` | Update an existing event |
+| `DELETE` | `/events/:id` | Delete an event |
+
+## AI
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/events/ask` | Ask AI questions about available events |
+
+---
+
+#  Project Structure
+
+```text
 src/
- ├── events/
- │    ├── events.controller.ts
- │    ├── events.service.ts
- │    ├── events.module.ts
- │    ├── dto/
- │    └── entities/
- │
- ├── llm/
- │    └── llm-rag.service.ts
- │
- ├── config/
- └── main.ts
+│
+├── events/
+│   ├── dto/
+│   ├── entities/
+│   ├── events.controller.ts
+│   ├── events.service.ts
+│   └── events.module.ts
+│
+├── llm/
+│   └── llm-rag.service.ts
+│
+├── config/
+│
+└── main.ts
+```
+
+### Module Responsibilities
+
+**Events Module**
+
+Responsible for event-related business logic, including creating, retrieving, updating, and deleting events.
+
+**LLM Module**
+
+Responsible for communication with the LLM provider, context construction, prompt engineering, and AI-generated responses.
+
+**Configuration**
+
+Responsible for managing application configuration and environment variables.
+
+---
+
+# ⚙️ Environment Configuration
+
+Create a `.env` file in the project root:
+
+```env
+OPENAI_API_KEY=your_openai_api_key
+```
+
+Never commit your real API keys to GitHub.
+
+Add the `.env` file to `.gitignore`:
+
+```gitignore
+.env
 ```
 
 ---
 
-## Environment Configuration
+#  Validation & Error Handling
 
-Create `.env` file:
+EventTix uses NestJS validation and exception handling mechanisms to ensure consistent and reliable API behavior.
 
+The project includes:
+
+- DTO validation.
+- `class-validator`.
+- `class-transformer`.
+- NestJS built-in exceptions.
+- `try/catch` handling where necessary.
+- Meaningful API error messages.
+- Validation of incoming requests.
+
+Example validation errors may include:
+
+```text
+400 Bad Request
+404 Event Not Found
+500 Internal Server Error
 ```
-OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
+
+---
+
+# Scalability & Future Enhancements
+
+EventTix is designed so that additional features can be introduced as the platform grows.
+
+Potential improvements include:
+
+###  Authentication & Authorization
+
+- User registration.
+- Login system.
+- JWT authentication.
+- Role-Based Access Control (RBAC).
+- Admin and user roles.
+
+###  Ticket Booking System
+
+- Ticket reservations.
+- Ticket availability.
+- Booking management.
+- QR-based tickets.
+- Booking confirmation.
+
+###  Payment Integration
+
+Possible integrations:
+
+- Stripe.
+- Paymob.
+- PayPal.
+
+###  Redis Caching
+
+Redis can be introduced to cache:
+
+- Frequently accessed events.
+- Event search results.
+- AI query results.
+- Frequently requested event information.
+
+###  Advanced RAG
+
+The current RAG architecture can evolve into a more advanced retrieval system using:
+
+```text
+Events
+   ↓
+Embedding Model
+   ↓
+Vector Embeddings
+   ↓
+Vector Database
+   ↓
+Similarity Search
+   ↓
+Top-K Relevant Events
+   ↓
+LLM
 ```
 
+Possible technologies include:
+
+- PostgreSQL + pgvector.
+- Pinecone.
+- Qdrant.
+- Weaviate.
+
+###  Recommendation Engine
+
+Future versions could recommend events based on:
+
+- User interests.
+- Previous bookings.
+- Event categories.
+- Location.
+- Search history.
+- Similar users.
+
+###  Analytics Dashboard
+
+Administrators could monitor:
+
+- Total events.
+- Ticket sales.
+- Popular events.
+- Revenue.
+- Booking trends.
+- User engagement.
+
+###  Production Improvements
+
+Future production improvements may include:
+
+- Docker.
+- CI/CD pipelines.
+- Rate limiting.
+- API logging.
+- Monitoring and observability.
+- Horizontal scaling.
+- Load balancing.
+- Queue-based background processing.
+
 ---
 
-## Error Handling
+#  Installation & Setup
 
-* try/catch blocks
-* NestJS Exceptions
-* Meaningful error messages
+## 1. Clone the Repository
 
----
+```bash
+git clone <repository-url>
+cd eventtix
+```
 
-##  Scalability & Future Enhancements
-
-* Authentication & Authorization
-* Ticket Booking System
-* Payment Integration
-* Redis Caching
-* Event Recommendation Engine
-* Analytics Dashboard
-
----
-
-##  How to Run the Project
+## 2. Install Dependencies
 
 ```bash
 npm install
+```
+
+## 3. Configure Environment Variables
+
+Create a `.env` file:
+
+```env
+OPENAI_API_KEY=your_openai_api_key
+```
+
+## 4. Start Development Server
+
+```bash
 npm run start:dev
 ```
 
-Server will run on:
+The application will run by default at:
 
-```
+```text
 http://localhost:3000
 ```
 
 ---
 
-##  Use Cases
+#  Use Cases
 
-* User asks about upcoming events
-* Admin manages events
-* AI-powered event discovery
+EventTix can support several real-world scenarios.
+
+### Event Discovery
+
+A user asks:
+
+```text
+What events are happening next week?
+```
+
+The system retrieves relevant events and generates a contextual response.
+
+### Upcoming Event Search
+
+A user asks:
+
+```text
+What is the nearest upcoming event?
+```
+
+The system analyzes the available event data and returns the most relevant result.
+
+### Event Administration
+
+An administrator can:
+
+```text
+Create Event
+Update Event
+Delete Event
+View Events
+```
+
+### AI-Powered Search
+
+Instead of requiring users to manually configure multiple filters, EventTix allows them to describe what they are looking for using natural language.
 
 ---
 
-##  Author
+#  Future Architecture
+
+As the platform grows, the architecture can evolve toward:
+
+```text
+                         ┌──────────────────┐
+                         │      Client      │
+                         └────────┬─────────┘
+                                  │
+                                  ▼
+                         ┌──────────────────┐
+                         │    NestJS API    │
+                         └────────┬─────────┘
+                                  │
+              ┌───────────────────┼───────────────────┐
+              │                   │                   │
+              ▼                   ▼                   ▼
+       ┌────────────┐      ┌─────────────┐     ┌─────────────┐
+       │ PostgreSQL │      │    Redis    │     │    Queue    │
+       └────────────┘      └─────────────┘     └─────────────┘
+              │
+              ▼
+       ┌────────────┐
+       │  pgvector  │
+       └──────┬─────┘
+              │
+              ▼
+       ┌────────────┐
+       │ RAG Service│
+       └──────┬─────┘
+              │
+              ▼
+       ┌────────────┐
+       │    LLM     │
+       └────────────┘
+```
+
+This architecture would allow EventTix to support larger datasets, semantic event search, caching, background jobs, and scalable AI-powered features.
+
+---
+
+#  Author
 
 **Omar Elhelaly**
-Backend Developer | Node.js | NestJS | AI Integration
+
+Backend Developer specializing in:
+
+- Node.js
+- NestJS
+- RESTful APIs
+- Database Design
+- Scalable Backend Systems
+- AI & LLM Integration
+- Retrieval-Augmented Generation
 
 ---
 
-##Final Note
+# Final Note
 
-EventTix is designed to be scalable, intelligent, and production-ready, combining modern backend architecture with AI-driven user experience.
+EventTix demonstrates how modern backend engineering can be combined with Large Language Models to build intelligent, data-aware applications.
+
+The project goes beyond traditional CRUD operations by introducing **AI-powered event discovery**, **context-aware responses**, and a **RAG-based architecture** designed to reduce hallucinations and improve answer accuracy.
+
+The long-term vision is to evolve EventTix into a complete, scalable event and ticketing platform with authentication, payments, recommendations, analytics, caching, and advanced semantic search.
